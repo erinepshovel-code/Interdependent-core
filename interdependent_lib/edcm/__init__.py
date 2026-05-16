@@ -12,6 +12,7 @@ from .parser.turns_rounds import (
     Turn,
     parse_transcript,
 )
+from .scorer import EDCMScorer, MetricScore, score_transcript
 
 UI_META = {
     "tab_id": "edcm",
@@ -54,6 +55,22 @@ UI_META = {
                 {"key": "speakers",    "type": "text", "label": "Speakers"},
             ],
         },
+        {
+            "id": "metrics",
+            "label": "9-Metric Score",
+            "endpoint": "/api/v1/edcm/score",
+            "fields": [
+                {"key": "metrics.C.value", "type": "gauge", "label": "C (Contradiction)"},
+                {"key": "metrics.R.value", "type": "gauge", "label": "R (Refusal)"},
+                {"key": "metrics.D.value", "type": "gauge", "label": "D (Drift)"},
+                {"key": "metrics.N.value", "type": "gauge", "label": "N (Noise)"},
+                {"key": "metrics.L.value", "type": "gauge", "label": "L (Load)"},
+                {"key": "metrics.O.value", "type": "gauge", "label": "O (Overrun)"},
+                {"key": "metrics.F.value", "type": "gauge", "label": "F (Fixation)"},
+                {"key": "metrics.E.value", "type": "gauge", "label": "E (Escalation)"},
+                {"key": "metrics.I.value", "type": "gauge", "label": "I (Integration Fail)"},
+            ],
+        },
     ],
 }
 
@@ -61,6 +78,7 @@ DATA_SCHEMA = {
     "endpoints": [
         {"method": "GET",  "path": "/api/v1/edcm/canon"},
         {"method": "POST", "path": "/api/v1/edcm/parse"},
+        {"method": "POST", "path": "/api/v1/edcm/score"},
         {"method": "GET",  "path": "/api/v1/edcm/markers"},
         {"method": "GET",  "path": "/api/v1/edcm/bones"},
     ],
@@ -68,7 +86,10 @@ DATA_SCHEMA = {
 
 __all__ = [
     "DATA_SCHEMA",
+    "EDCMScorer",
+    "MetricScore",
     "UI_META",
+    "score_transcript",
     # bones
     "affixes",
     "bone_set",

@@ -146,6 +146,27 @@ print(canon.metric_names())                  # ["C", "R", "D", "N", "L", "O", "F
 print(canon.all_marker_phrases("R")[:3])    # refusal / constraint phrases
 ```
 
+Score a parsed transcript against the 9 EDCM metric families:
+
+```python
+from interdependent_lib.edcm import EDCMScorer, parse_transcript
+
+parsed = parse_transcript([
+    {"speaker": "A", "text": "You must stop. Can you confirm?"},
+    {"speaker": "B", "text": "I can't do that. I won't."},
+    {"speaker": "A", "text": "I demand you reconsider."},
+])
+scores = EDCMScorer().score(parsed)
+print(scores["R"].value)              # refusal density (lexical)
+print(scores["E"].value)              # escalation (lexical)
+print(scores["F"].value)              # None — fixation needs embeddings
+print(scores["F"].marker_counts)      # marker counts still available
+```
+
+Four metrics are lexical (R, N, L, E); the other five (C, D, O, F, I)
+return ``value=None`` with ``requires_embeddings=True`` and the raw marker
+counts, ready for a downstream embedding-aware host to finish.
+
 **No external dependencies.**  Data loaded lazily via `importlib.resources`.
 
 PKQTS families:
