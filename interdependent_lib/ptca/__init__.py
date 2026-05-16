@@ -42,7 +42,66 @@ from .sentinels import (
 )
 from .tensor import PTCATensor
 
+UI_META = {
+    "tab_id": "ptca",
+    "label": "PTCA Core",
+    "icon": "Hexagon",
+    "order": 3,
+    "sections": [
+        {
+            "id": "instance",
+            "label": "Instance State",
+            "endpoint": "/api/v1/ptca/state",
+            "fields": [
+                {"key": "session_id",   "type": "text",  "label": "Session"},
+                {"key": "model_id",     "type": "text",  "label": "Model"},
+                {"key": "caller_id",    "type": "text",  "label": "Caller"},
+                {"key": "approved",     "type": "badge", "label": "Approved"},
+                {"key": "risk_score",   "type": "gauge", "label": "Risk"},
+            ],
+        },
+        {
+            "id": "sentinels",
+            "label": "Sentinel Channels",
+            "endpoint": "/api/v1/ptca/state",
+            "fields": [
+                {"key": "S5_CONTEXT.token_count", "type": "text",  "label": "S5 Tokens"},
+                {"key": "S7_MEMORY.store",       "type": "text",  "label": "S7 Memory"},
+                {"key": "S8_RISK.score",         "type": "gauge", "label": "S8 Risk"},
+                {"key": "S9_AUDIT.log",          "type": "text",  "label": "S9 Audit Entries"},
+            ],
+        },
+        {
+            "id": "core",
+            "label": "Hosted Core",
+            "endpoint": "/api/v1/ptca/core/audit",
+            "fields": [
+                {"key": "seed_count",            "type": "text",  "label": "Seeds"},
+                {"key": "sentinel_seed_count",   "type": "text",  "label": "Sentinel Seeds"},
+                {"key": "channel_count",         "type": "text",  "label": "Channels"},
+                {"key": "tensor_size",           "type": "text",  "label": "Tensor Size"},
+                {"key": "mean_of_seed_means",    "type": "gauge", "label": "Mean Weight"},
+                {"key": "max_seed_spread",       "type": "gauge", "label": "Max Spread"},
+            ],
+        },
+    ],
+}
+
+DATA_SCHEMA = {
+    "endpoints": [
+        {"method": "GET",  "path": "/api/v1/ptca/state"},
+        {"method": "POST", "path": "/api/v1/ptca/route"},
+        {"method": "POST", "path": "/api/v1/ptca/approve"},
+        {"method": "POST", "path": "/api/v1/ptca/revoke"},
+        {"method": "GET",  "path": "/api/v1/ptca/audit"},
+        {"method": "GET",  "path": "/api/v1/ptca/core/audit"},
+        {"method": "GET",  "path": "/api/v1/ptca/core/tensor"},
+    ],
+}
+
 __all__ = [
+    "DATA_SCHEMA",
+    "UI_META",
     "AGG6",
     "AGG_SEEDS",
     "ALPHA",

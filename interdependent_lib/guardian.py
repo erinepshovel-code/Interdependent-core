@@ -50,6 +50,36 @@ if TYPE_CHECKING:
     from interdependent_lib.ptca.instance import PTCAInstance
 
 
+UI_META = {
+    "tab_id": "guardian",
+    "label": "Guardian Bridge",
+    "icon": "Shield",
+    "order": 6,
+    "sections": [
+        {
+            "id": "sealed",
+            "label": "Last Seal",
+            "endpoint": "/api/v1/guardian/state",
+            "fields": [
+                {"key": "epoch",         "type": "text",  "label": "Epoch"},
+                {"key": "key_id",        "type": "text",  "label": "Key ID"},
+                {"key": "sealed_by",     "type": "text",  "label": "Sealed By"},
+                {"key": "sealed_at",     "type": "text",  "label": "Sealed At"},
+                {"key": "ciphertext_len","type": "gauge", "label": "Ciphertext Size"},
+            ],
+        },
+    ],
+}
+
+DATA_SCHEMA = {
+    "endpoints": [
+        {"method": "GET",  "path": "/api/v1/guardian/state"},
+        {"method": "POST", "path": "/api/v1/guardian/seal"},
+        {"method": "POST", "path": "/api/v1/guardian/unseal"},
+    ],
+}
+
+
 _SPIRAL_DEFAULT: dict[str, float] = {"phase": 0.0, "magnitude": 0.0, "base": 0.0}
 
 

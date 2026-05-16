@@ -20,8 +20,52 @@ from .validate import InvariantViolation, validate_invariant
 from .wipe import wipe, wipe_bytearray, wipe_bytes
 from .wrap import unwrap_live_key, wrap_live_key
 
+UI_META = {
+    "tab_id": "pcea",
+    "label": "PCEA Crypto",
+    "icon": "Lock",
+    "order": 4,
+    "sections": [
+        {
+            "id": "keys",
+            "label": "Active Keys",
+            "endpoint": "/api/v1/pcea/state",
+            "fields": [
+                {"key": "epoch",        "type": "text",  "label": "Epoch"},
+                {"key": "key_id",       "type": "text",  "label": "Key ID"},
+                {"key": "sealed_count", "type": "text",  "label": "Sealed States"},
+                {"key": "last_sealed",  "type": "text",  "label": "Last Sealed"},
+            ],
+        },
+        {
+            "id": "shares",
+            "label": "Meta Shares",
+            "endpoint": "/api/v1/pcea/shares",
+            "fields": [
+                {"key": "threshold",    "type": "text",  "label": "Threshold"},
+                {"key": "total_shares", "type": "text",  "label": "Total Shares"},
+                {"key": "commitment",   "type": "text",  "label": "Commitment"},
+            ],
+        },
+    ],
+}
+
+DATA_SCHEMA = {
+    "endpoints": [
+        {"method": "GET",  "path": "/api/v1/pcea/state"},
+        {"method": "POST", "path": "/api/v1/pcea/seal"},
+        {"method": "POST", "path": "/api/v1/pcea/unseal"},
+        {"method": "POST", "path": "/api/v1/pcea/rekey"},
+        {"method": "GET",  "path": "/api/v1/pcea/shares"},
+        {"method": "POST", "path": "/api/v1/pcea/shares/split"},
+        {"method": "POST", "path": "/api/v1/pcea/shares/reconstruct"},
+    ],
+}
+
 __all__ = [
     "AuthenticationError",
+    "DATA_SCHEMA",
+    "UI_META",
     "InvariantViolation",
     "LiveState",
     "MetaShares",
