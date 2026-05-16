@@ -76,6 +76,19 @@ print(inst.audit_tail(3))    # last 3 S9 audit entries
 
 **No external dependencies.** Tensor backed by a flat `list[float]`.
 
+Full structural composition (53 seeds × 7 PCTA circles × 7 PCNA networks)
+is available via `PTCASeed` and `PTCACore`:
+
+```python
+from interdependent_lib.ptca import PTCACore
+
+core = PTCACore.from_layer_sizes([4, 8, 2])
+print(core)                              # PTCACore(seeds=53, sentinels=4, channels=9, ...)
+print(len(core.sentinel_seeds))          # 4
+print(core.channel_owner(0).node_index)  # sentinel seed owning S1
+print(core.audit()["total_params"])      # parameters across all 53*7*7 networks
+```
+
 ---
 
 ### PCEA — Prime Circle Encryption Algorithm

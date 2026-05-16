@@ -16,6 +16,7 @@ from .constants import (
     SENTINELS,
     SLOTS,
 )
+from .core import CORE_SEEDS, DEFAULT_SENTINEL_INDICES, PTCACore, SENTINEL_SEED_COUNT
 from .exchange import Exchange, ExchangeResult, aggregate_identity, aggregate_seeds, compute_score
 from .instance import PTCAInstance
 from .primes import PRIME_NODES, PRIME_TO_NODE, is_prime_node, node_for_prime, prime_for_node
@@ -26,6 +27,7 @@ from .provenance import (
     hash_block,
     verify_chain,
 )
+from .seed import SEED_CIRCLES, PTCASeed
 from .sentinels import (
     S1ProvenanceState,
     S2PolicyState,
@@ -45,14 +47,20 @@ __all__ = [
     "AGG_SEEDS",
     "ALPHA",
     "BETA",
+    "CORE_SEEDS",
+    "DEFAULT_SENTINEL_INDICES",
     "DELTA",
     "GAMMA",
     "NODES",
     "PHASES",
     "PRIME_NODES",
     "PRIME_TO_NODE",
+    "PTCACore",
     "PTCAInstance",
+    "PTCASeed",
     "PTCATensor",
+    "SEED_CIRCLES",
+    "SENTINEL_SEED_COUNT",
     "S1ProvenanceState",
     "S2PolicyState",
     "S3BoundsState",
