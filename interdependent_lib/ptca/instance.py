@@ -44,6 +44,7 @@ import uuid
 from typing import Any
 
 from interdependent_lib.ptca.constants import NODES, PHASES, SLOTS
+from interdependent_lib.ptca.core import PTCACore
 from interdependent_lib.ptca.exchange import Exchange, ExchangeResult
 from interdependent_lib.ptca.provenance import build_block, extend_chain, hash_block
 from interdependent_lib.ptca.sentinels import SentinelState
@@ -71,6 +72,12 @@ class PTCAInstance:
         Whether S4 starts in an approved state.
     max_context_entries:
         Maximum number of S5 context entries to retain.
+    core:
+        Optional :class:`PTCACore` to host inside this instance.  When
+        supplied, the instance routes exchanges through the core's
+        routing tensor (so structural weights and per-exchange scores
+        live on the same object), and ``audit_core`` /
+        ``as_core_tensor`` expose the core's composition state.
     """
 
     def __init__(
@@ -83,11 +90,16 @@ class PTCAInstance:
         bounds: dict[str, Any] | None = None,
         approved: bool = False,
         max_context_entries: int = 256,
+        core: PTCACore | None = None,
     ) -> None:
         self.session_id = session_id or uuid.uuid4().hex
 
-        # Core PTCA objects
-        self.tensor = PTCATensor()
+        # Core PTCA objects.  When a PTCACore is supplied the instance
+        # routes through its tensor so structural weights and exchange
+        # scores live on a single object; otherwise it owns a private
+        # routing tensor.
+        self.core: PTCACore | None = core
+        self.tensor = core.tensor if core is not None else PTCATensor()
         self.sentinel_state = SentinelState()
         self._exchange = Exchange(self.tensor, self.sentinel_state)
 
@@ -307,6 +319,37 @@ class PTCAInstance:
         return self._exchange.batch_route(exchanges)
 
     # ------------------------------------------------------------------
+    # Hosted PTCACore composition
+    # ------------------------------------------------------------------
+
+    def attach_core(self, core: PTCACore) -> None:
+        """Attach a PTCACore after construction.
+
+        The instance switches to routing through the core's tensor
+        immediately; previous tensor contents are discarded.
+        """
+        self.core = core
+        self.tensor = core.tensor
+        self._exchange = Exchange(self.tensor, self.sentinel_state)
+        self.sentinel_state.s9.record(
+            "core_attached",
+            seed_count=len(core),
+            sentinel_indices=list(core.sentinel_indices),
+        )
+
+    def audit_core(self) -> dict[str, Any]:
+        """Return :meth:`PTCACore.audit` of the hosted core, or raise."""
+        if self.core is None:
+            raise RuntimeError("No PTCACore is attached to this instance")
+        return self.core.audit()
+
+    def as_core_tensor(self) -> list[float]:
+        """Return the flat structural tensor of the hosted core, or raise."""
+        if self.core is None:
+            raise RuntimeError("No PTCACore is attached to this instance")
+        return self.core.as_tensor()
+
+    # ------------------------------------------------------------------
     # Snapshot
     # ------------------------------------------------------------------
 
@@ -320,7 +363,7 @@ class PTCAInstance:
         format for S5–S9).
         """
         s = self.sentinel_state
-        return {
+        snap: dict[str, Any] = {
             "session_id": self.session_id,
             "S5_CONTEXT": {
                 "entries": s.s5.entries,
@@ -343,6 +386,13 @@ class PTCAInstance:
                 "log": s.s9.log,
             },
         }
+        if self.core is not None:
+            snap["CORE"] = {
+                "sentinel_indices": list(self.core.sentinel_indices),
+                "seed_count": len(self.core),
+                "tensor_size": self.core.tensor_size,
+            }
+        return snap
 
     def __repr__(self) -> str:
         return (

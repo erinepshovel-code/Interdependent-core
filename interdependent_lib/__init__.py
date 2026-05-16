@@ -12,8 +12,9 @@ __all__ = ["edcm", "pcna", "pcta", "ptca"]
 # environments without a working `cryptography` install can still use the
 # stdlib-only subpackages.
 try:
-    from . import pcea  # noqa: F401
+    from . import guardian, pcea  # noqa: F401
 except Exception:  # pragma: no cover - import guard
     pcea = None  # type: ignore[assignment]
+    guardian = None  # type: ignore[assignment]
 else:
-    __all__.append("pcea")
+    __all__.extend(["pcea", "guardian"])
