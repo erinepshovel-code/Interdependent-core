@@ -28,7 +28,7 @@ from typing import Optional
 
 REPO = Path(__file__).resolve().parents[1]
 TESTS_DIR = REPO / "tests"
-CANON_DIR = REPO / "interdependent_lib/edcmbone/canon"
+CANON_DIR = REPO / "interdependent_lib/edcm/data"
 ARTIFACT_PATH = TESTS_DIR / "_artifacts/canon_coherence_report.json"
 
 # Heuristic — class is inferred from test filename. Tests can override by
