@@ -25,7 +25,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 TESTS_DIR = REPO / "tests"
-CANON_DIR = REPO / "interdependent_lib/edcmbone/canon"
+CANON_DIRS = [
+    REPO / "interdependent_lib/edcm/data",
+    REPO / "interdependent_lib/edcmbone/canon",
+]
 ARTIFACT_PATH = TESTS_DIR / "_artifacts/canon_coherence_report.json"
 
 # Heuristic classifier. Tests can override by embedding a header comment:
@@ -96,24 +99,25 @@ def discover_tests() -> list[Path]:
 def discover_coverage_gaps() -> list[CoverageGap]:
     """Surface canon-declared metrics/rules with no fixture or test reference."""
     gaps: list[CoverageGap] = []
-    if not CANON_DIR.exists():
-        return gaps
 
     declared: set[str] = set()
-    for cf in CANON_DIR.rglob("*.json"):
-        try:
-            data = json.loads(cf.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
+    for canon_dir in CANON_DIRS:
+        if not canon_dir.exists():
             continue
-        for key in ("metric_id", "rule_id"):
-            if isinstance(data, dict) and key in data:
-                declared.add(str(data[key]))
-            if isinstance(data, dict):
-                for value in data.values():
-                    if isinstance(value, list):
-                        for item in value:
-                            if isinstance(item, dict) and key in item:
-                                declared.add(str(item[key]))
+        for cf in canon_dir.rglob("*.json"):
+            try:
+                data = json.loads(cf.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            for key in ("metric_id", "rule_id"):
+                if isinstance(data, dict) and key in data:
+                    declared.add(str(data[key]))
+                if isinstance(data, dict):
+                    for value in data.values():
+                        if isinstance(value, list):
+                            for item in value:
+                                if isinstance(item, dict) and key in item:
+                                    declared.add(str(item[key]))
 
     fixture_text = ""
     fixtures_dir = TESTS_DIR / "fixtures"
