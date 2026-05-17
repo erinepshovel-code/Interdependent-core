@@ -109,10 +109,10 @@ def discover_coverage_gaps() -> list[CoverageGap]:
                 data = json.loads(cf.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 continue
-            for key in ("metric_id", "rule_id"):
-                if isinstance(data, dict) and key in data:
-                    declared.add(str(data[key]))
-                if isinstance(data, dict):
+            if isinstance(data, dict):
+                for key in ("metric_id", "rule_id"):
+                    if key in data:
+                        declared.add(str(data[key]))
                     for value in data.values():
                         if isinstance(value, list):
                             for item in value:
