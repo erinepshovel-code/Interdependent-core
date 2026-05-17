@@ -117,9 +117,9 @@ def discover_coverage_gaps() -> list[CoverageGap]:
                     if isinstance(value, list):
                         for item in value:
                             if isinstance(item, dict):
-                                for key in ("metric_id", "rule_id"):
-                                    if key in item:
-                                        declared.add(str(item[key]))
+                                for id_key in ("metric_id", "rule_id"):
+                                    if id_key in item:
+                                        declared.add(str(item[id_key]))
 
     fixture_text = ""
     fixtures_dir = TESTS_DIR / "fixtures"
