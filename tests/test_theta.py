@@ -1,5 +1,5 @@
 """
-Tests for the Guardian adapter that bridges PTCA snapshots and PCEA sealing.
+Tests for the theta bridge that connects PTCA snapshots and PCEA sealing.
 
 These tests require a working ``cryptography`` package; ``conftest.py``
 already skips the entire file when ``cryptography`` cannot be imported.
@@ -12,7 +12,7 @@ import pytest
 # Skip the whole module if cryptography is unavailable in this environment.
 pytest.importorskip("cryptography")
 
-from interdependent_lib import guardian  # noqa: E402
+from interdependent_lib import theta  # noqa: E402
 from interdependent_lib.pcea import wipe  # noqa: E402
 from interdependent_lib.pcea.types import LiveState  # noqa: E402
 from interdependent_lib.ptca import PTCACore, PTCAInstance  # noqa: E402
@@ -23,18 +23,18 @@ IKM = b"x" * 32
 
 def test_pack_snapshot_is_deterministic_for_same_input():
     snap = {"S6_IDENTITY": {"model_id": "m"}, "value": 42}
-    a = guardian.pack_snapshot(snap, epoch=1)
-    b = guardian.pack_snapshot(snap, epoch=1)
+    a = theta.pack_snapshot(snap, epoch=1)
+    b = theta.pack_snapshot(snap, epoch=1)
     assert a == b
 
 
 def test_pack_unpack_round_trip():
     snap = {"foo": [1, 2, 3], "bar": {"baz": True}}
-    packed = guardian.pack_snapshot(snap, epoch=7)
+    packed = theta.pack_snapshot(snap, epoch=7)
     assert isinstance(packed, LiveState)
     assert packed.epoch == 7
     assert packed.coherence == 1.0
-    assert guardian.unpack_snapshot(packed) == snap
+    assert theta.unpack_snapshot(packed) == snap
 
 
 def test_unpack_rejects_unrelated_live_state():
@@ -48,12 +48,12 @@ def test_unpack_rejects_unrelated_live_state():
         last_renorm=0.0,
     )
     with pytest.raises(ValueError, match="snapshot"):
-        guardian.unpack_snapshot(not_ours)
+        theta.unpack_snapshot(not_ours)
 
 
 def test_seal_unseal_snapshot_round_trip():
     snap = {"S5_CONTEXT": {"entries": [{"role": "user", "content": "hi"}]}}
-    sealed, live_key = guardian.seal_snapshot(
+    sealed, live_key = theta.seal_snapshot(
         snap,
         ikm=IKM,
         epoch=1,
@@ -64,7 +64,7 @@ def test_seal_unseal_snapshot_round_trip():
     try:
         assert sealed.epoch == 1
         assert sealed.key_id == "k1"
-        recovered = guardian.unseal_snapshot(sealed, live_key)
+        recovered = theta.unseal_snapshot(sealed, live_key)
         assert recovered == snap
     finally:
         wipe(live_key)
@@ -76,7 +76,7 @@ def test_seal_unseal_instance_round_trip():
     inst.remember("favourite_colour", "indigo")
     inst.update_risk(0.2, factor="manual")
 
-    sealed, live_key = guardian.seal_instance(
+    sealed, live_key = theta.seal_instance(
         inst,
         ikm=IKM,
         epoch=2,
@@ -85,7 +85,7 @@ def test_seal_unseal_instance_round_trip():
         sealed_by="g0",
     )
     try:
-        recovered = guardian.unseal_instance(sealed, live_key)
+        recovered = theta.unseal_instance(sealed, live_key)
         assert recovered == inst.snapshot()
         assert recovered["S6_IDENTITY"]["model_id"] == "claude"
         assert recovered["S7_MEMORY"]["store"]["favourite_colour"] == "indigo"
@@ -97,7 +97,7 @@ def test_seal_unseal_instance_round_trip():
 def test_seal_instance_includes_core_block_when_hosted():
     core = PTCACore.from_layer_sizes([2, 3, 1])
     inst = PTCAInstance(core=core)
-    sealed, live_key = guardian.seal_instance(
+    sealed, live_key = theta.seal_instance(
         inst,
         ikm=IKM,
         epoch=3,
@@ -106,7 +106,7 @@ def test_seal_instance_includes_core_block_when_hosted():
         sealed_by="g0",
     )
     try:
-        recovered = guardian.unseal_instance(sealed, live_key)
+        recovered = theta.unseal_instance(sealed, live_key)
         assert recovered["CORE"]["seed_count"] == 53
         assert recovered["CORE"]["tensor_size"] == core.tensor_size
     finally:
@@ -114,7 +114,7 @@ def test_seal_instance_includes_core_block_when_hosted():
 
 
 def test_unseal_with_wrong_key_fails():
-    sealed, live_key = guardian.seal_snapshot(
+    sealed, live_key = theta.seal_snapshot(
         {"v": 1},
         ikm=IKM,
         epoch=1,
@@ -126,6 +126,6 @@ def test_unseal_with_wrong_key_fails():
         bad_key = bytearray(live_key)
         bad_key[0] ^= 0xFF
         with pytest.raises(Exception):  # AEAD authentication failure
-            guardian.unseal_snapshot(sealed, bytes(bad_key))
+            theta.unseal_snapshot(sealed, bytes(bad_key))
     finally:
         wipe(live_key)

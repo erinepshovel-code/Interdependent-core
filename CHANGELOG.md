@@ -18,8 +18,8 @@ versions follow [SemVer](https://semver.org/).
 - `PTCACore.from_layer_sizes([...])` factory that builds the whole
   53 × 7 × 7-network core in one call.
 
-#### Guardian PCEA bridge
-- New top-level module `interdependent_lib.guardian` packs a
+#### Theta bridge (PTCA ↔ PCEA)
+- New top-level module `interdependent_lib.theta` packs a
   `PTCAInstance.snapshot()` (or any dict) into a `LiveState`, derives a
   fresh live key from caller-supplied IKM, and seals it via PCEA.
 - `seal_snapshot` / `unseal_snapshot` / `seal_instance` /
@@ -44,7 +44,7 @@ versions follow [SemVer](https://semver.org/).
 - Module helpers: `score_transcript`, `EDCMScorer.score_text`.
 
 #### a0 `UI_META` + `DATA_SCHEMA` convention
-- Every subsystem (`pcna`, `pcta`, `ptca`, `pcea`, `edcm`, `guardian`)
+- Every subsystem (`pcna`, `pcta`, `ptca`, `pcea`, `edcm`, `theta`)
   declares the two constants matching a0's
   `/api/v1/ui/structure` aggregation contract.
 - New top-level helper `interdependent_lib.ui_structure()` returns
@@ -61,8 +61,8 @@ versions follow [SemVer](https://semver.org/).
 
 - Top-level `interdependent_lib/__init__.py` now re-exports `pcna`,
   `pcta`, `ptca`, `edcm`, and (when `cryptography` is importable)
-  `pcea` and `guardian`.
-- `conftest.py` cryptography skip now also covers `test_guardian.py`
+  `pcea` and `theta`.
+- `conftest.py` cryptography skip now also covers `test_theta.py`
   and writes a stderr line when it triggers, so the silent test-count
   drop you used to see is now loud.
 

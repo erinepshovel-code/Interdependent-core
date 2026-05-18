@@ -12,14 +12,15 @@ __all__ = ["edcm", "pcna", "pcta", "ptca", "ui_structure"]
 
 # pcea depends on the third-party `cryptography` package. Import it lazily so
 # environments without a working `cryptography` install can still use the
-# stdlib-only subpackages.
+# stdlib-only subpackages.  The `theta` bridge module sits on top of pcea, so
+# it shares the same import guard.
 try:
-    from . import guardian, pcea  # noqa: F401
+    from . import pcea, theta  # noqa: F401
 except Exception:  # pragma: no cover - import guard
     pcea = None  # type: ignore[assignment]
-    guardian = None  # type: ignore[assignment]
+    theta = None  # type: ignore[assignment]
 else:
-    __all__.extend(["pcea", "guardian"])
+    __all__.extend(["pcea", "theta"])
 
 
 def ui_structure() -> dict[str, Any]:
@@ -43,8 +44,8 @@ def ui_structure() -> dict[str, Any]:
     ]
     if pcea is not None:
         candidates.append(("pcea", pcea))
-    if guardian is not None:
-        candidates.append(("guardian", guardian))
+    if theta is not None:
+        candidates.append(("theta", theta))
 
     modules: list[dict[str, Any]] = []
     for name, mod in candidates:
