@@ -7,7 +7,7 @@ from typing import Any
 
 from . import edcm, pcna, pcta, ptca
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = ["edcm", "pcna", "pcta", "ptca", "ui_structure"]
 
 # pcea depends on the third-party `cryptography` package. Import it lazily so
