@@ -1,0 +1,7 @@
+{
+  "metric_id": "R",
+  "layer": "behavioral",
+  "formula": "count_R_marker / max(1, total_turns)",
+  "variables": ["count_R_marker", "total_turns"],
+  "notes": "SWAP-ME: real R formula + variable names. This patch is intentionally separate from canonical markers_v1.json for review before merge."
+}
