@@ -14,7 +14,7 @@ import sys
 
 CRYPTO_TEST_FILES = [
     "tests/test_pcea.py",
-    "tests/test_guardian.py",
+    "tests/test_theta.py",
 ]
 
 

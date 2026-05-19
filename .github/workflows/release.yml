@@ -1,0 +1,67 @@
+name: release
+
+# Builds + publishes to PyPI when a tag matching v* is pushed.
+#
+# Uses PyPI Trusted Publishing (OIDC) — no API token secret required.
+# One-time setup (per PyPI project):
+#   PyPI -> Manage project -> Publishing -> Add a new pending publisher
+#     PyPI Project Name:  interdependent-lib
+#     Owner:              erinepshovel-code
+#     Repository name:    interdependent-lib
+#     Workflow name:      release.yml
+#     Environment name:   (leave blank, or set "release" and add an
+#                          environment with that name below)
+#
+# Trigger a release by tagging a commit on main:
+#   git tag v0.2.0
+#   git push origin v0.2.0
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Verify built artifacts
+        run: |
+          ls -la dist/
+          python -m pip install --upgrade twine
+          twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    # Trusted publishing requires `id-token: write`.
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
