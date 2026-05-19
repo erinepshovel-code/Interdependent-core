@@ -53,19 +53,19 @@ def test_every_subpackage_declares_ui_meta_and_data_schema():
         _check_data_schema(mod.DATA_SCHEMA)
 
 
-def test_pcea_and_guardian_declare_metadata_when_available():
+def test_pcea_and_theta_declare_metadata_when_available():
     if interdependent_lib.pcea is None:
         return
     _check_ui_meta(interdependent_lib.pcea.UI_META)
     _check_data_schema(interdependent_lib.pcea.DATA_SCHEMA)
-    assert interdependent_lib.guardian is not None
-    _check_ui_meta(interdependent_lib.guardian.UI_META)
-    _check_data_schema(interdependent_lib.guardian.DATA_SCHEMA)
+    assert interdependent_lib.theta is not None
+    _check_ui_meta(interdependent_lib.theta.UI_META)
+    _check_data_schema(interdependent_lib.theta.DATA_SCHEMA)
 
 
 def test_tab_ids_are_unique():
     tab_ids = []
-    for mod in ALWAYS_PRESENT + [interdependent_lib.pcea, interdependent_lib.guardian]:
+    for mod in ALWAYS_PRESENT + [interdependent_lib.pcea, interdependent_lib.theta]:
         if mod is None:
             continue
         tab_ids.append(mod.UI_META["tab_id"])
@@ -94,14 +94,24 @@ def test_ui_structure_aggregates_and_orders_modules():
         _check_data_schema(entry["data_schema"])
 
 
-def test_ui_structure_includes_pcea_and_guardian_when_available():
+def test_ui_structure_includes_pcea_and_theta_when_available():
     if interdependent_lib.pcea is None:
         return
     names = [m["name"] for m in interdependent_lib.ui_structure()["modules"]]
     assert "pcea" in names
-    assert "guardian" in names
-    # Guardian last (order=6).
-    assert names[-1] == "guardian"
+    assert "theta" in names
+    # theta last (order=6).
+    assert names[-1] == "theta"
+
+
+def test_theta_tab_id_and_label_match_rename():
+    if interdependent_lib.theta is None:
+        return
+    meta = interdependent_lib.theta.UI_META
+    assert meta["tab_id"] == "theta"
+    assert meta["label"] == "Theta Bridge"
+    for ep in interdependent_lib.theta.DATA_SCHEMA["endpoints"]:
+        assert ep["path"].startswith("/api/v1/theta/")
 
 
 def test_data_schema_paths_match_ui_meta_endpoint_prefixes():

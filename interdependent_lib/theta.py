@@ -1,6 +1,6 @@
 # GPT/Claude generated; context, prompt Erin Spencer
 """
-Guardian adapter: bridges PTCA session state and PCEA encryption.
+Theta bridge: bridges PTCA session state and PCEA encryption.
 
 PCEA seals a strongly-typed :class:`LiveState` dataclass.  PTCA produces
 session snapshots via :meth:`PTCAInstance.snapshot` and structural state
@@ -20,7 +20,7 @@ Sealing a :class:`PTCAInstance`
 -------------------------------
 ::
 
-    from interdependent_lib.guardian import seal_instance, unseal_instance
+    from interdependent_lib.theta import seal_instance, unseal_instance
     sealed, live_key = seal_instance(
         inst,
         ikm=b"...32+ bytes of entropy...",
@@ -51,15 +51,15 @@ if TYPE_CHECKING:
 
 
 UI_META = {
-    "tab_id": "guardian",
-    "label": "Guardian Bridge",
+    "tab_id": "theta",
+    "label": "Theta Bridge",
     "icon": "Shield",
     "order": 6,
     "sections": [
         {
             "id": "sealed",
             "label": "Last Seal",
-            "endpoint": "/api/v1/guardian/state",
+            "endpoint": "/api/v1/theta/state",
             "fields": [
                 {"key": "epoch",         "type": "text",  "label": "Epoch"},
                 {"key": "key_id",        "type": "text",  "label": "Key ID"},
@@ -73,9 +73,9 @@ UI_META = {
 
 DATA_SCHEMA = {
     "endpoints": [
-        {"method": "GET",  "path": "/api/v1/guardian/state"},
-        {"method": "POST", "path": "/api/v1/guardian/seal"},
-        {"method": "POST", "path": "/api/v1/guardian/unseal"},
+        {"method": "GET",  "path": "/api/v1/theta/state"},
+        {"method": "POST", "path": "/api/v1/theta/seal"},
+        {"method": "POST", "path": "/api/v1/theta/unseal"},
     ],
 }
 
