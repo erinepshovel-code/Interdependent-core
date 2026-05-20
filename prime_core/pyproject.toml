@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prime_core"
+version = "0.1.0"
+description = "The Pxxx quartet — PCNA, PCTA, PTCA, PCEA — unified prime-circular tensor architecture"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Erin Patrick Spencer", email = "wayseer@interdependentway.org" }
+]
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+envelope = ["cryptography>=41"]
+dev = ["pytest>=8.0", "build", "twine"]
+
+[project.urls]
+Homepage      = "https://interdependentway.org"
+Repository    = "https://github.com/erinepshovel-code/prime_core"
+"Bug Tracker" = "https://github.com/erinepshovel-code/prime_core/issues"
+
+[tool.setuptools.packages.find]
+where   = ["src"]
+include = ["prime_core*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
