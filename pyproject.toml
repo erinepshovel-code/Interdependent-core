@@ -27,3 +27,9 @@ include = ["interdependent_lib*"]
 
 [tool.setuptools.package-data]
 "interdependent_lib.edcm.data" = ["*.json"]
+
+[tool.pytest.ini_options]
+# Scope test discovery to the monolith's own tests/ directory. Sibling
+# scaffolds like prime_core/ ship their own pytest config and are not
+# discoverable from this root.
+testpaths = ["tests"]
