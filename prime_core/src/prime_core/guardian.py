@@ -1,17 +1,35 @@
-"""Guardian — placeholder for the prime_core guardian module.
+"""Deprecated — use :mod:`prime_core.theta`.
 
-The monolith ``interdependent_lib`` did not actually contain a top-level
-``guardian.py`` — its guardian helpers live inside ``pcea/guardian.py`` and
-``theta.py``, both of which depend on the AES/HKDF/Shamir PCEA envelope
-that is explicitly excluded from v0.1.0 (canon C7).
-
-For v0.1.0 we ship this stub so ``from prime_core import guardian`` works.
-A real guardian extraction can be done once the optional ``pcea/envelope.py``
-envelope lands, at which point the seal/unseal helpers can be carried
-forward and rewired to the bijective base-p core (or kept as a separate
-transport layer).
+The guardian role (sealing PTCA state through PCEA) is provided by the
+theta bridge. This module re-exports theta's public API and emits a
+:class:`DeprecationWarning` on import. It will be removed in a future
+release.
 """
 
 from __future__ import annotations
 
-__all__: list[str] = []
+import warnings
+
+from prime_core.theta import (
+    pack_snapshot,
+    seal_instance,
+    seal_snapshot,
+    unpack_snapshot,
+    unseal_instance,
+    unseal_snapshot,
+)
+
+warnings.warn(
+    "prime_core.guardian is deprecated; use prime_core.theta instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
+__all__ = [
+    "pack_snapshot",
+    "seal_instance",
+    "seal_snapshot",
+    "unpack_snapshot",
+    "unseal_instance",
+    "unseal_snapshot",
+]

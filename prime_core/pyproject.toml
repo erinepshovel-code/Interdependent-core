@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,8 @@ name = "prime_core"
 version = "0.1.0"
 description = "The Pxxx quartet — PCNA, PCTA, PTCA, PCEA — unified prime-circular tensor architecture"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [
   { name = "Erin Patrick Spencer", email = "wayseer@interdependentway.org" }
 ]

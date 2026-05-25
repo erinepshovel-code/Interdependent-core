@@ -57,4 +57,4 @@ there fails, the scaffold is not v0.1.0.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+Apache-2.0 — see [`LICENSE`](LICENSE).
