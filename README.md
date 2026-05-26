@@ -1,4 +1,4 @@
-# interdependent-lib
+# interdependent-core
 
 Pure-Python implementation of five interdependent subsystems arranged in a
 strict hierarchy for EDCM-PCNA-PCTA transcript analysis and guardian-state
@@ -184,7 +184,7 @@ PKQTS families:
 ## Install
 
 ```bash
-pip install interdependent-lib
+pip install interdependent-core
 ```
 
 Requires Python ≥ 3.9.  `pcea` requires `cryptography >= 41`; `ptca` and `edcm`
@@ -193,8 +193,8 @@ are stdlib-only.
 ## Development
 
 ```bash
-git clone https://github.com/wayseer00/interdependent-lib
-cd interdependent-lib
+git clone https://github.com/erinepshovel-code/Interdependent-core
+cd interdependent-core
 pip install -e .
 ```
 
